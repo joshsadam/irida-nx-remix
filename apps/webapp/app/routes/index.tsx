@@ -1,4 +1,4 @@
-import type { MetaFunction, LoaderFunction } from 'remix';
+import { MetaFunction, LoaderFunction, Form } from 'remix';
 import { useLoaderData, json, Link } from 'remix';
 
 type IndexData = {
@@ -60,6 +60,9 @@ export default function Index() {
 
   return (
     <div className="remix__page">
+      <Form action="/logout" method="post">
+        <button>Logout</button>
+      </Form>
       <main>
         <h2>Welcome to Remix!</h2>
         <p>We're stoked that you're here. 🥳</p>

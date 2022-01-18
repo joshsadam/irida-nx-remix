@@ -11,8 +11,6 @@ export let sessionStorage = createCookieSessionStorage({
   },
 });
 
-console.log(`STORAGE SECRET: ${String(process.env.SESSION_PWD)}`);
-
 export function getSession(request: Request): Promise<Session> {
   return sessionStorage.getSession(request.headers.get('Cookie'));
 }

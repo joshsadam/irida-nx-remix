@@ -22,10 +22,10 @@ interface GraphqlResponse {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  let token = await authenticator.isAuthenticated(request, {
-    failureRedirect: '/login',
-  });
+  console.log('/projects LoaderFunction');
+  const token = await authenticator.isAuthenticated(request);
 
+  console.log(token);
   const response: GraphqlResponse = await client.query({
     query: ALL_PROJECTS_QUERY,
     context: {

@@ -4,8 +4,10 @@ import { authenticator } from '~/services/auth';
 export const loader: LoaderFunction = async ({ request }) => {
   let token = await authenticator.isAuthenticated(request);
 
-  // Check token
-  if (token) return redirect('/');
+  if (token && new Date(token.expires_at) > new Date()) {
+    return redirect('/');
+  }
+
   return {};
 };
 
@@ -21,11 +23,11 @@ export default function Login() {
   return (
     <Form method="post">
       <div>
-        <label>Email</label>
+        <label htmlFor="username">Username</label>
         <input type="text" name="username" required />
       </div>
       <div>
-        <label>Password</label>
+        <label htmlFor="password">Password</label>
         <input type="password" name="password" required />
       </div>
       <button>Login</button>

@@ -4,6 +4,7 @@ import {
   ModuleOptions,
   PasswordTokenConfig,
   ResourceOwnerPassword,
+  Token,
 } from 'simple-oauth2';
 import { sessionStorage } from './session.server';
 
@@ -18,7 +19,7 @@ const options: ModuleOptions = {
   },
 };
 
-export let authenticator = new Authenticator(sessionStorage);
+export let authenticator = new Authenticator<Token>(sessionStorage);
 
 authenticator.use(
   new FormStrategy(async ({ form, context }) => {

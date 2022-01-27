@@ -1,5 +1,5 @@
-import {Form, LoaderFunction, Outlet, redirect} from 'remix';
-import {authenticator} from '~/services/auth';
+import { Form, Link, LoaderFunction, Outlet, redirect } from 'remix';
+import { authenticator } from '~/services/auth';
 
 // Loaders provide data to components and are only ever called on the server, so
 // you can connect to a database or run any server side code you want right next
@@ -21,9 +21,20 @@ export let loader: LoaderFunction = async ({ request }) => {
 export default function AppLayout() {
   return (
     <div>
-      <Form action="/logout" method="post">
-        <button>Logout</button>
-      </Form>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div>
+          <Link to="/">Dashboard</Link> <Link to="/projects">Projects</Link>
+        </div>
+        <Form action="/logout" method="post">
+          <button>Logout</button>
+        </Form>
+      </div>
       <Outlet />
     </div>
   );

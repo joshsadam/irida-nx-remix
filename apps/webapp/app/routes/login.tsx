@@ -5,6 +5,7 @@ import {
   LoaderFunction,
   redirect,
   useActionData,
+  useTransition,
 } from 'remix';
 import { authenticator } from '~/services/auth';
 import { AuthorizationError } from 'remix-auth';
@@ -36,6 +37,9 @@ export const action: ActionFunction = async ({ request, context }) => {
 
 export default function Login() {
   const errors = useActionData();
+  const transition = useTransition();
+
+  let busy = typeof transition.submission === 'object';
 
   return (
     <Form method="post">
@@ -52,7 +56,9 @@ export default function Login() {
         <label htmlFor="password">Password</label>
         <input type="password" name="password" required />
       </div>
-      <button>Login</button>
+      <button type="submit" name="_action" value="login" disabled={busy}>
+        Login
+      </button>
     </Form>
   );
 }

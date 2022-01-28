@@ -45,7 +45,7 @@ export default function Projects() {
           {projects.map((project) => (
             <tr key={project.id}>
               <td>{project.name}</td>
-              <td>{formatTimeStamp(new Date(project.createdDate), 'en-CA')}</td>
+              <td>{formatTimeStamp(new Date(project.createdDate))}</td>
             </tr>
           ))}
         </tbody>

@@ -3,6 +3,7 @@ import { LoaderFunction, useLoaderData } from 'remix';
 import client from '~/services/apollo-client';
 import { authenticator } from '~/services/auth';
 import { IProject } from '@irida/types';
+import { formatTimeStamp } from '@irida/utils';
 
 export const ALL_PROJECTS_QUERY = gql`
   query ALL_PROJECTS_QUERY {
@@ -42,9 +43,9 @@ export default function Projects() {
       <table>
         <tbody>
           {projects.map((project) => (
-            <tr key={project.identifier}>
+            <tr key={project.id}>
               <td>{project.name}</td>
-              <td>{project.createdDate}</td>
+              <td>{formatTimeStamp(new Date(project.createdDate), 'en-CA')}</td>
             </tr>
           ))}
         </tbody>

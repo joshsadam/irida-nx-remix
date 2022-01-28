@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@irida/types": ["libs/types/src/index.ts"]
+      "@irida/types": ["libs/types/src/index.ts"],
+      "@irida/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

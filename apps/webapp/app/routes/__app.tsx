@@ -1,12 +1,29 @@
-import { Form, Link, LoaderFunction, Outlet, redirect } from 'remix';
+import { gql } from '@apollo/client';
+import {
+  Form,
+  Link,
+  LoaderFunction,
+  Outlet,
+  redirect,
+  useLoaderData,
+} from 'remix';
+import client from '~/services/apollo-client';
 import { authenticator } from '~/services/auth';
+
+export const VIEWER_QUERY = gql`
+  query VIEWER_QUERY {
+    viewer {
+      id
+      username
+    }
+  }
+`;
 
 // Loaders provide data to components and are only ever called on the server, so
 // you can connect to a database or run any server side code you want right next
 // to the component that renders it.
 // https://remix.run/api/conventions#loader
 export let loader: LoaderFunction = async ({ request }) => {
-  console.log('__app LoaderFunction');
   const token = await authenticator.isAuthenticated(request, {
     failureRedirect: '/login',
   });
@@ -15,10 +32,20 @@ export let loader: LoaderFunction = async ({ request }) => {
     return redirect('/login');
   }
 
-  return {};
+  const response = await client.query({
+    query: VIEWER_QUERY,
+    context: {
+      headers: {
+        Authorization: `Bearer ${token.access_token}`,
+      },
+    },
+  });
+
+  return response.data.viewer;
 };
 
 export default function AppLayout() {
+  const viewer = useLoaderData();
   return (
     <div>
       <div
@@ -32,7 +59,7 @@ export default function AppLayout() {
           <Link to="/">Dashboard</Link> <Link to="/projects">Projects</Link>
         </div>
         <Form action="/logout" method="post">
-          <button>Logout</button>
+          <button>Logout: {viewer.username}</button>
         </Form>
       </div>
       <Outlet />

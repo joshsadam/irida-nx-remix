@@ -7,11 +7,13 @@ import { formatTimeStamp } from '@irida/utils';
 
 export const ALL_PROJECTS_QUERY = gql`
   query ALL_PROJECTS_QUERY {
-    projects {
-      id
-      name
-      createdDate
-      modifiedDate
+    viewer {
+      projects {
+        id
+        name
+        createdDate
+        modifiedDate
+      }
     }
   }
 `;
@@ -32,7 +34,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       },
     },
   });
-  return response.data.projects;
+  return response.data.viewer.projects;
 };
 
 export default function Projects() {

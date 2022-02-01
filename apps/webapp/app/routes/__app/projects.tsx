@@ -5,7 +5,7 @@ import { authenticator } from '~/services/auth';
 import { IProject } from '@irida/types';
 import { formatTimeStamp } from '@irida/utils';
 
-export const ALL_PROJECTS_QUERY = gql`
+const ALL_PROJECTS_QUERY = gql`
   query ALL_PROJECTS_QUERY {
     viewer {
       projects {
@@ -50,7 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const { _action, ...values } = Object.fromEntries(formData);
 
-  const response: GraphqlResponse = await client.mutate({
+  await client.mutate({
     mutation: CREATE_PROJECT_MUTATION,
     variables: {
       name: values.name,
@@ -65,7 +65,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Projects() {
-  const projects = useLoaderData();
+  const projects = useLoaderData<IProject[]>();
   return (
     <main>
       <h1>PROJECTS</h1>

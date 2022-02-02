@@ -22,6 +22,7 @@ const ALL_PROJECTS_QUERY = gql`
       projects {
         id
         name
+        projectDescription
         createdDate
         modifiedDate
       }
@@ -69,10 +70,13 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const { _action, ...values } = Object.fromEntries(formData);
 
+  console.log(values);
+
   await client.mutate({
     mutation: CREATE_PROJECT_MUTATION,
     variables: {
       name: values.name,
+      projectDescription: values.description,
     },
     context: {
       headers: {
@@ -115,6 +119,7 @@ export default function Projects() {
               <td>
                 <Link to={`/projects/${project.id}`}>{project.name}</Link>
               </td>
+              <td>{project.projectDescription}</td>
               <td>{formatTimeStamp(new Date(project.createdDate))}</td>
             </tr>
           ))}
@@ -129,6 +134,10 @@ export default function Projects() {
         <label htmlFor="name">
           Project Name
           <input type="text" name="name" />
+        </label>
+        <label htmlFor="description">
+          Project Name
+          <textarea rows={3} name="description" />
         </label>
         <button type="submit" name="_action" value="create">
           Create Project

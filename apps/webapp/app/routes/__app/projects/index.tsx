@@ -6,6 +6,7 @@ import {
   Link,
   LoaderFunction,
   MetaFunction,
+  redirect,
   useLoaderData,
   useTransition,
 } from 'remix';
@@ -13,6 +14,7 @@ import client from '~/services/apollo-client';
 import { authenticator } from '~/services/auth';
 import { IProject } from '@irida/types';
 import { formatTimeStamp } from '@irida/utils';
+import { Token } from 'simple-oauth2';
 
 const ALL_PROJECTS_QUERY = gql`
   query ALL_PROJECTS_QUERY {
@@ -37,12 +39,17 @@ const CREATE_PROJECT_MUTATION = gql`
 
 interface GraphqlResponse {
   data: {
-    projects: IProject[];
+    viewer: {
+      projects: IProject[];
+    };
   };
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const token = await authenticator.isAuthenticated(request);
+  const token: Token | null = await authenticator.isAuthenticated(request);
+  if (token === null) {
+    return redirect('/login');
+  }
   const response: GraphqlResponse = await client.query({
     query: ALL_PROJECTS_QUERY,
     context: {
@@ -55,7 +62,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const token = await authenticator.isAuthenticated(request);
+  const token: Token | null = await authenticator.isAuthenticated(request);
+  if (token === null) {
+    return redirect('/login');
+  }
   const formData = await request.formData();
   const { _action, ...values } = Object.fromEntries(formData);
 
@@ -115,7 +125,7 @@ export default function Projects() {
       <hr />
       <br />
 
-      <Form ref={formRef} method="post">
+      <Form ref={formRef} replace method="post">
         <label htmlFor="name">
           Project Name
           <input type="text" name="name" />

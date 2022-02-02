@@ -1,15 +1,9 @@
-import { gql } from '@apollo/client';
-import {
-  ActionFunction,
-  Form,
-  LoaderFunction,
-  MetaFunction,
-  useLoaderData,
-} from 'remix';
+import {gql} from '@apollo/client';
+import {ActionFunction, Form, Link, LoaderFunction, useLoaderData} from 'remix';
 import client from '~/services/apollo-client';
-import { authenticator } from '~/services/auth';
-import { IProject } from '@irida/types';
-import { formatTimeStamp } from '@irida/utils';
+import {authenticator} from '~/services/auth';
+import {IProject} from '@irida/types';
+import {formatTimeStamp} from '@irida/utils';
 
 const ALL_PROJECTS_QUERY = gql`
   query ALL_PROJECTS_QUERY {
@@ -34,21 +28,11 @@ const CREATE_PROJECT_MUTATION = gql`
 
 interface GraphqlResponse {
   data: {
-    viewer: {
-      projects: IProject[];
-    };
+    projects: IProject[];
   };
 }
 
-// https://remix.run/api/conventions#meta
-export let meta: MetaFunction = () => {
-  return {
-    title: 'IRIDA REMIXED: Projects',
-    description: 'Listing of all project that you have access to.',
-  };
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({request}) => {
   const token = await authenticator.isAuthenticated(request);
   const response: GraphqlResponse = await client.query({
     query: ALL_PROJECTS_QUERY,
@@ -61,12 +45,12 @@ export const loader: LoaderFunction = async ({ request }) => {
   return response.data.viewer.projects;
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({request}) => {
   const token = await authenticator.isAuthenticated(request);
-  let formData = await request.formData();
-  let { _action, ...values } = Object.fromEntries(formData);
+  const formData = await request.formData();
+  const {_action, ...values} = Object.fromEntries(formData);
 
-  const response = await client.mutate({
+  await client.mutate({
     mutation: CREATE_PROJECT_MUTATION,
     variables: {
       name: values.name,
@@ -77,7 +61,6 @@ export const action: ActionFunction = async ({ request }) => {
       },
     },
   });
-  console.log({ response });
   return {};
 };
 
@@ -88,26 +71,26 @@ export default function Projects() {
       <h1>PROJECTS</h1>
       <table>
         <tbody>
-          {projects.map((project) => (
-            <tr key={project.id}>
-              <td>{project.name}</td>
-              <td>{formatTimeStamp(new Date(project.createdDate))}</td>
-            </tr>
-          ))}
+        {projects.map((project) => (
+          <tr key={project.id}>
+            <td><Link to={`/projects/${project.id}`}>{project.name}</Link></td>
+            <td>{formatTimeStamp(new Date(project.createdDate))}</td>
+          </tr>
+        ))}
         </tbody>
       </table>
 
-      <br />
-      <hr />
-      <br />
+      <br/>
+      <hr/>
+      <br/>
 
       <Form method="post">
         <label htmlFor="name">
           Project Name
-          <input type="text" name="name" />
+          <input type="text" name="name"/>
         </label>
         <button type="submit" name="_action" value="create">
-          Create
+          Create Project
         </button>
       </Form>
     </main>
